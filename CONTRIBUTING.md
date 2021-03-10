@@ -1,4 +1,4 @@
-# Contributing to <Repo Name>
+# Contributing to redux-module
 
 1. [Reporting Bugs](#reporting-bugs)
 2. [Contributing Code](#contributing-code)
@@ -8,14 +8,14 @@
 
 ## Reporting Bugs
 
-Before reporting a bug on the project's [issues
-page](https://github.com/FoodEssentials/<Repo Name>/issues), first make sure
-that your issue is caused by <Repo Name>, not your application code (e.g.
+Before reporting a bug on the project's
+[issues page](https://github.com/labelinsight/redux-module/issues), first make
+sure that your issue is caused by redux-module, not your application code (e.g.
 passing incorrect arguments to methods, etc.). Second, search the already
 reported issues for similar cases, and if it's already reported, just add any
 additional details in the comments.
 
-After you've made sure that you've found a new <Repo Name> bug, here are some
+After you've made sure that you've found a new redux-module bug, here are some
 tips for creating a helpful report that will make fixing it much easier and
 quicker:
 
@@ -29,8 +29,8 @@ quicker:
 ### Considerations for Accepting Patches
 
 Before sending a pull request with a new feature, check if it's been discussed
-before already on [GitHub
-issues](https://github.com/FoodEssentials/<Repo Name>/issues):
+before already on
+[GitHub issues](https://github.com/labelinsight/redux-module/issues):
 
 If your feature or API improvement did get merged into master, please consider
 submitting another pull request with a corresponding documentation update.
@@ -69,4 +69,4 @@ Harassment of participants or other unethical and unprofessional behavior will
 not be tolerated in our spaces. The
 [Contributor Covenant](http://contributor-covenant.org/version/1/3/0/) applies
 to all projects under the Label Insight organization. Report any issues to
-<Moderator Email>
+devops@labelinsight.com

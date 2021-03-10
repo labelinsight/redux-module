@@ -1,9 +1,9 @@
 # ReduxModule
 
-> The ultimate Redux boilerplate reducer
+> The ultimate [Redux][redux] boilerplate reducer
 
 ```js
-// this creates an action type, an action creator, AND reducer handle
+// this creates an action type, action creator, AND reducer handle
 app.create('setUser', ['user'])
 ```
 
@@ -13,14 +13,15 @@ app.create('setUser', ['user'])
 - [Why](#why)
 - [Comparison with Vanilla Redux](#comparison-with-vanilla-redux)
 - [Usage](#usage)
+- [API](#api)
+  - [ReduxModule](#reduxmodule)
+  - [create](#create)
+  - [module](#module)
 - [Suggested Patterns](#suggested-patterns)
   - [Export Types and Creators](#export-types-and-creators)
   - [Modules](#modules)
   - [Side Effects](#side-effects)
-- [API](#api)
-  - [ReduxModule](#new-reduxmodulename-string-options-object-object)
-  - [create](#createname-string-mixed-function`)
-  - [module](#module)
+  - [Use Reducer Example](#use-reducer-example)
 
 ## Installation
 
@@ -28,13 +29,14 @@ app.create('setUser', ['user'])
 npm install --save @labelinsight/redux-module
 ```
 
-## Wat?
+## Why?
 
 ReduxModule reduces boilerplate noise by removing the need for developers to
 have to create types or wire them to creators or reducer handlers, _ever_. The
-module also provides a convenient setter syntax for bypassing state merges when
-updates do not require previous state or logic, which cuts out a surprising
-amount of code.
+module also provides a convenient setter syntax for automatically creating state
+merges when updates do not require previous state or logic, which cuts out a
+surprising amount of code. It has zero dependencies and requires no middleware.
+It is just a boilerplate ... reducer 😜.
 
 ## Comparison with Vanilla Redux
 
@@ -69,7 +71,7 @@ export const login = email => async dispatch => {
   // fetch user, etc.
 }
 
-// previous to redux-module we prefered a handlers map to giant switch caase
+// even before redux-module we preferred a handlers map to a switch case
 const handlers = {}
 
 handlers[SHOW_LOGIN_FORM] = (state, { showLoginForm }) => ({
@@ -108,9 +110,8 @@ app.create('showLoginForm', ['showLoginForm'])
 app.create('setLoginPending', ['loginPending'])
 app.create('setUser', ['user'])
 
-// example assuming redux thunk
 export const getUser = email => async dispatch => {
-  // etc.
+  // ...
 }
 
 export const reducer = app.reducer(initialState)
@@ -164,9 +165,11 @@ app.create('setColor', ['color'])
 ```
 
 Those brackets instruct the instance to set the `color` property on state when
-the `setColor` action is dispatched. It is the same as if manually did this:
+the `setColor` action is dispatched. It is the same as manually doing this:
 
 ```js
+// NOTE: the code here is just to illustrate how types, creators, and handlers are
+// stored internally! You should not use the module this way!
 app.types.setColor = 'app/setColor'
 
 app.creators.setColor = color => ({
@@ -186,20 +189,15 @@ To dispatch the `setColor` action:
 dispatch(app.creators.setColor('rebeccapurple'))
 ```
 
-Setter shorhand allows for multiple values, and uses lodash/fp/set under the
-hood so you can use deep keypaths:
+"Setter shorthand" allows for multiple values
 
 ```js
 store.getState() // => { user: {} }
 
-app.create('setUserAge', ['user.age'])
 app.create('setFooAndBar', ['foo', 'bar'])
 
-dispatch(app.creators.setUserAge(21))
-store.getState() // => { user: { age: 21 } }
-
 dispatch(app.creators.setFooAndBar(10, 11))
-store.getState() // => { user: { age: 21 }, foo: 10, bar: 11 }
+store.getState() // => { user: {}, foo: 10, bar: 11 }
 ```
 
 For traditional reducer logic, you can provide a reducer case as the last
@@ -216,8 +214,8 @@ app.create('loginFailed', 'status', (state, { status }) => ({
 > cannot mix this signature with setter shortand syntax.
 
 The final step is to create a reducer. Since we already defined our reducer
-handles directly via calls to `#create`, the only thing left to do is call
-`app.reducer` and send the result to Redux' createStore:
+handles directly via calls to [create](#create), the only thing left to do is
+call `app.reducer` and send the result to Redux' createStore:
 
 ```js
 // app.js
@@ -232,6 +230,109 @@ import { reducer as app } from './app'
 
 const store = createStore({ app }, ...)
 ```
+
+## API
+
+### ReduxModule
+
+The default export.
+
+```js
+new ReduxModule(name: string): => Object
+```
+
+#### Properties:
+
+- `types`: synchronous action creator type defs
+- `creators`: all action creators created with `create`
+- `handlers`: all reducer handlers created in `create`.
+- `name`: the ReduxModule instance name as passed to the constructor.
+
+### `create`
+
+Register a type, action creator, and optional reducer handle. Take care to
+memorize the different signatures this method takes.
+
+##### Signatures:
+
+#### `(type: string): ActionCreator`
+
+Creates an action creator with no payload.
+
+#### `(type: string, ...actionArgs: Array<string>): ActionCreator`
+
+Redux action creator
+
+```js
+const app = new ReduxModule('app')
+app.create('foo', 'a', 'b')
+app.creators.foo(1, 2) // => { type: 'app/foo', a: 1, b: 2 }
+```
+
+#### `(type: string, setter: Array<string>): ActionCreator`
+
+Redux action creator and a reducer using "setter shorthand".
+
+```js
+const app = new ReduxModule('app')
+
+app.create('foo', 'a', 'b')
+app.create('bar', ['a', 'b'])
+
+const reducer = app.reducer()
+
+const state = { a: 98, b: 99 }
+
+reducer(state, app.creators.foo(1, 2)) // => { a: 98, b: 99 }
+reducer(state, app.creators.bar(1, 2)) // => { a: 1, b: 2 }
+```
+
+#### `(type: string, ...args?: Array<string>, reducerHandle: Function)`
+
+If the last argument to [`create`](#create) is a function, it will be registered
+as a reducer "case" for the action type specified by the `type` argument.
+
+```js
+const app = new ReduxModule('app')
+
+app.create('setEmail', 'email', (state, { email }) => ({
+  ...state,
+  user: {
+    ...state.user,
+    email,
+  },
+}))
+
+const state = {
+  user: {
+    email: undefined,
+  },
+}
+
+const reducer = app.reducer()
+
+reducer(state, setEmail('example@domain.com'))
+// => { user: { email: 'example@domain.com' } }
+```
+
+### `#module(name: string, ?options: Object)`
+
+Create a sub-module of a ReduxModule instance. A submodule will inherit the
+parent module options and prefix the parent module name with its own name:
+
+```js
+const app = new ReduxModule('app')
+const sub = app.module('sub')
+
+const feature = sub.module('feature')
+feature.create('hello')
+feature.types.hello === 'app/sub/feature/hello'
+```
+
+### `#reducer(initialState?: Object)`
+
+Create a reducer which will utilize all handlers defined from previous
+[`create`](#create) calls.
 
 ## Suggested Usage Patterns
 
@@ -255,8 +356,7 @@ Then, when mapping:
 ```js
 import { creators } from './app'
 
-let mapDispatchToProps
-
+// if you need them all
 const mapDispatchToProps = creators
 
 // or just provide the ones this container needs:
@@ -264,16 +364,6 @@ const mapDispatchToProps = {
   foo: creators.foo,
   bar: creators.bar,
 }
-
-// the same as above using destructuring:
-const { foo, bar } = creators
-const mapDispatchToProps = {
-  foo,
-  bar,
-}
-
-// using lodash/fp/pick
-mapDispatchToProps = pick(['foo', 'bar', 'baz'], creators)
 ```
 
 At scale this practice of exporting/importing the `#creators` object leaves a
@@ -322,13 +412,40 @@ various routes and feature folders to create submodules, and will want your
 route build chunks to be small. Only use the parent `app` module for really
 important things that might be used across the entire app.
 
+Here is an example directory structure following Label Insight's conventions
+(files not related to omitted for brevity)
+
+```
+/src
+  /store
+    redux (app = new ReduxModule('app'))
+  /routes
+    /Products
+      redux (products = app.module('products'))
+    /Product
+      redux (product = app.module('product'))
+```
+
+And looking into redux-logger streams in dev tools, we'll see action dispatches
+from this app as well as our internal libraries like this:
+
+```js
+‣ action auth/success
+‣ action featureFlags/setFlags
+‣ action app/locationChange
+‣ action app/products/getProducts
+‣ action app/products/setProducts
+‣ action app/locationChange
+‣ action app/product/setProduct
+‣ action app/product/update
+```
+
 ### Side Effects
 
 Side effects are not the responsibility of this library (similar to redux
 itself). There is nothing getting in the way of common side effect solutions
-offered by [redux-thunk][redux-thunk] or [redux-saga][redux-saga]. In any case,
-here are a couple code examples illustrating how these two solutions work along
-with ReduxModule:
+offered by [redux-thunk] or [redux-saga]. In any case, here are a couple code
+examples illustrating how these two solutions work along with ReduxModule:
 
 **redux-saga**
 
@@ -358,12 +475,12 @@ function* onGetFoo({ bar }) {
 }
 ```
 
-**redux-think**
+**redux-thunk**
 
 There is absolutely nothing special to do with thunks, since thunks don't make
 use of action types. One thing you _can_ do to for the sake of code organization
-is add your thunks to the `ReduxModule#creators` object so you have to worry
-about managing imports/exports:
+is add your thunks to the `ReduxModule#creators` object so you don't have to
+worry about managing imports/exports:
 
 ```js
 // app.js
@@ -383,76 +500,34 @@ const mapStateToProps = {
 }
 ```
 
-## API
+### Use Reducer Example
 
-### `new ReduxModule(name: string, options?: Object): => Object`
-
-#### `options.creatorKeyTransform: (type: string): => string (= null)`:
-
-If you _really_ want to stick with typical SCREAMING_CASE types and camelCase
-action creators, use [camelCase](camelcase):
+There is nothing preventing you from using redux-module along with React's built
+in [`useReducer`][use-reducer] hook.
 
 ```js
-import camelCase from 'camelcase'
+import React, { useReducer } from 'react'
+import ReduxModule from '@labelinsight/redux-module'
 
-const app = new ReduxModule('APP', { creatorKeyTransform: camelCase })
-
-app.create('DO_STUFF')
-console.log(app.types.DO_STUFF) // 'APP/DO_STUFF'
-typeof app.creators.doStuff === 'function'
-```
-
-#### `options.delimiter: string = '/'`:
-
-Override default module name / type delimiter
-
-#### Properties:
-
-- `types`: synchronous action creator type defs
-- `creators`: all action creators created with `create`
-- `handlers`: all reducer handlers created in `create`. Use these in your own
-  custom reducer implementation if the provided result from
-  `ReduxModule#reducer` doesn't meet your needs. Otherwise you never have to
-  interact with this.
-- `name`: the ReduxModule instance name as passed to constructor or `module`.
-
-### `#create: Function`
-
-Register a type, action creator, and optional reducer handle
-
-##### Signatures:
-
-#### `(name: string): ActionCreator`
-
-Creates an action creator that includes a default `payload` key when dispatched.
-
-#### `(name: string, setter: Array<string>): ActionCreator`
-
-Setter shorthand, where `setter` is an array of keypaths.
-
-### `#module(name: string, ?options: Object)`
-
-Create a sub-module of a ReduxModule instance. A submodule will inherit the
-parent module options and prefix the parent module name with its own:
-
-```js
 const app = new ReduxModule('app')
-const sub = app.module('sub')
 
-const feature = sub.module('feature')
-feature.create('hello')
-feature.types.hello === 'app/sub/feature/hello'
+app.create('setFoo', ['foo'])
+
+const reducer = app.reducer()
+const initialState = { foo: undefined }
+
+export default function MyComponent() {
+  const [state, dispatch] = usuReducer(reducer, initialState)
+
+  // ...
+}
 ```
-
-### `#reducer(initialState?: Object)`
-
-Create a reducer which will utilize all handlers defined from previous `#create`
-calls.
 
 ## License
 
 MIT
 
-[fp]: https://github.com/lodash/lodash/wiki/FP-Guide
+[redux]: https://github.com/reduxjs/redux
 [redux-saga]: https://github.com/redux-saga/redux-saga
 [redux-thunk]: https://github.com/reduxjs/redux-thunk
+[use-reducer]: https://reactjs.org/docs/hooks-reference.html#usereducer
