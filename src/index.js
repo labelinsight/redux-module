@@ -1,4 +1,4 @@
-export default class ReduxModule {
+module.exports = class ReduxModule {
   constructor(name) {
     this.name = name
     this.types = {}

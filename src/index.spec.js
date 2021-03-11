@@ -1,6 +1,6 @@
 import ReduxModule from './index'
 
-const inspect = object => JSON.parse(JSON.stringify(object))
+const inspect = (object) => JSON.parse(JSON.stringify(object))
 
 describe('ReduxModule', () => {
   describe('constructor', () => {

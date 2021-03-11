@@ -4,11 +4,11 @@
   "description": "The ultimate Redux boilerplate reducer",
   "main": "dist/index.js",
   "scripts": {
-    "build": "npm run clean && babel src/*.mjs --ignore \"**/*.spec.mjs\" --out-dir dist --source-maps",
+    "build": "npm run clean && babel src/*.js --ignore \"**/*.spec.js\" --out-dir dist --source-maps",
     "clean": "rm -rf dist && mkdir dist",
     "lint": "eslint . --ext js,mjs",
     "lint:fix": "npm run lint -- --fix",
-    "test": "jest src/**/*.spec.js",
+    "test": "jest src",
     "test:dev": "npm t -- --watch"
   },
   "keywords": [
