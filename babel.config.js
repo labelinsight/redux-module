@@ -3,12 +3,16 @@ module.exports = {
     [
       '@babel/preset-env',
       {
-        targets: {
-          chrome: '58',
-          ie: '11',
-        },
+        modules: 'umd',
       },
     ],
   ],
-  plugins: ['@babel/plugin-transform-modules-commonjs'],
+  // plugins: [
+  //   [
+  //     '@babel/plugin-transform-modules-commonjs',
+  //     {
+  //       noInterop: false,
+  //     },
+  //   ],
+  // ],
 }
