@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   presets: [
     [
       '@babel/preset-env',
@@ -10,4 +10,5 @@ export default {
       },
     ],
   ],
+  plugins: ['@babel/plugin-transform-modules-commonjs'],
 }

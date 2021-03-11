@@ -3,8 +3,6 @@
   "version": "0.0.2",
   "description": "The ultimate Redux boilerplate reducer",
   "main": "dist/index.js",
-  "module": "src/index.js",
-  "type": "module",
   "scripts": {
     "build": "npm run clean && babel src/*.mjs --ignore \"**/*.spec.mjs\" --out-dir dist --source-maps",
     "clean": "rm -rf dist && mkdir dist",
@@ -26,6 +24,7 @@
     "@babel/cli": "7.13.10",
     "@babel/core": "7.13.10",
     "@babel/eslint-parser": "7.13.10",
+    "@babel/plugin-transform-modules-commonjs": "^7.13.8",
     "@babel/preset-env": "7.8.4",
     "eslint": "7.21.0",
     "eslint-config-prettier": "8.1.0",
