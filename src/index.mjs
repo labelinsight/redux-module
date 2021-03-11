@@ -7,13 +7,13 @@ export default class ReduxModule {
   }
 
   module(name) {
-    return new ReduxModule(prefixName(this, name))
+    return new ReduxModule(`${this.name}/${name}`)
   }
 
   create(type, ...rest) {
     const first = rest[0]
     const last = rest[rest.length - 1]
-    const prefixedType = prefixName(this, type)
+    const prefixedType = `${this.name}/${type}`
     let paths
 
     this.types[type] = prefixedType
@@ -36,7 +36,9 @@ export default class ReduxModule {
 
   reducer(initialState = {}) {
     return (state = initialState, action) =>
-      safeReducer(this.handlers, state, action)
+      this.handlers[action.type]
+        ? this.handlers[action.type](state, action)
+        : state
   }
 }
 
@@ -60,12 +62,4 @@ function makeActionCreator(type, paths) {
       return acc
     }, {}),
   })
-}
-
-function prefixName(reduxModule, name) {
-  return `${reduxModule.name}/${name}`
-}
-
-function safeReducer(handlers, state, action) {
-  return handlers[action.type] ? handlers[action.type](state, action) : state
 }

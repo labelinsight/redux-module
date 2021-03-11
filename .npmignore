@@ -1,6 +1,7 @@
 node_modules
 *.log
 .DS_Store
-examples/
 .prettier*
 .eslint*
+babel.config.js
+CHANGELOG.md

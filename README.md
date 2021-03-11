@@ -31,7 +31,7 @@ npm install --save @labelinsight/redux-module
 
 ## Why?
 
-ReduxModule reduces boilerplate noise by removing the need for developers to
+redux-module reduces boilerplate noise by removing the need for developers to
 have to create types or wire them to creators or reducer handlers, _ever_. The
 module also provides a convenient setter syntax for automatically creating state
 merges when updates do not require previous state or logic, which cuts out a
@@ -120,12 +120,17 @@ export default app
 
 Hopefully you are sold by this minimal example, but if not, consider this: a
 typical redux "round trip" involves three JavaScript expressions: an action
-type, a creator, and a reducer case. redux-module reduces that to one. So, if
+type, a creator, and a reducer case. ReduxModule reduces that to one. So, if
 your slice of redux has say, 30 of these routines, that means you'll need to
 write 90 expresions. With redux-module you'd write 30. Furthermore in vanilla
 redux, assuming basic example above that just sets a top-level key and uses
 prettier formatting, each "round trip" equates to 9 lines of code. 90 \* 9 = 810
 lines of code! With redux-module, again, it's just 30 :).
+
+The image below is a real before & after diff of refactoring one of our projects
+to use redux-module:
+
+![before-after](before-after.png)
 
 ## Usage
 
