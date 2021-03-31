@@ -51,23 +51,23 @@ const SHOW_LOGIN_FORM = 'SHOW_LOGIN_FORM'
 const SET_LOGIN_PENDING = 'LOGIN_PENDING'
 const SET_USER = 'SET_USER'
 
-export const showLoginForm = showLoginForm => ({
+export const showLoginForm = (showLoginForm) => ({
   type: SHOW_LOGIN_FORM,
   showLoginForm,
 })
 
-export const setLoginPending = loginPending => ({
+export const setLoginPending = (loginPending) => ({
   type: SHOW_LOGIN_FORM,
   loginPending,
 })
 
-export const setUser = user => ({
+export const setUser = (user) => ({
   type: SET_USER,
   user,
 })
 
 // example assuming redux thunk
-export const login = email => async dispatch => {
+export const login = (email) => async (dispatch) => {
   // fetch user, etc.
 }
 
@@ -110,7 +110,7 @@ app.create('showLoginForm', ['showLoginForm'])
 app.create('setLoginPending', ['loginPending'])
 app.create('setUser', ['user'])
 
-export const getUser = email => async dispatch => {
+export const getUser = (email) => async (dispatch) => {
   // ...
 }
 
@@ -177,7 +177,7 @@ the `setColor` action is dispatched. It is the same as manually doing this:
 // stored internally! You should not use the module this way!
 app.types.setColor = 'app/setColor'
 
-app.creators.setColor = color => ({
+app.creators.setColor = (color) => ({
   type: 'app/setColor',
   color,
 })
@@ -492,7 +492,7 @@ worry about managing imports/exports:
 app.create('setModalOpen', ['modalOpen'])
 
 // our thunk def:
-app.creators.getFoo = () => dispatch => {
+app.creators.getFoo = () => (dispatch) => {
   // implmentation...
 }
 
@@ -522,7 +522,7 @@ const reducer = app.reducer()
 const initialState = { foo: undefined }
 
 export default function MyComponent() {
-  const [state, dispatch] = usuReducer(reducer, initialState)
+  const [state, dispatch] = useReducer(reducer, initialState)
 
   // ...
 }
