@@ -10,5 +10,17 @@ export default {
     libraryTarget: 'umd',
     filename: 'index.js',
     path: `${__dirname}/dist`,
+    globalObject: 'this',
+  },
+  module: {
+    rules: [
+      {
+        test: /\.m?js$/,
+        exclude: /(node_modules)/,
+        use: {
+          loader: 'babel-loader',
+        },
+      },
+    ],
   },
 }
