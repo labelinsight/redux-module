@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "type": "commonjs",
   "scripts": {
-    "build": "npm run clean && babel src/*.js --ignore \"**/*.spec.js\" --out-dir dist --source-maps",
+    "build": "npm run clean && webpack --config webpack.config.mjs --mode production",
     "clean": "rm -rf dist && mkdir dist",
     "lint": "eslint . --ext js,mjs",
     "lint:fix": "npm run lint -- --fix",
@@ -30,6 +30,8 @@
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-prettier": "^3.3.1",
     "jest": "^25.1.0",
-    "prettier": "^2.2.1"
+    "prettier": "^2.2.1",
+    "webpack": "^5.28.0",
+    "webpack-cli": "^4.6.0"
   }
 }
