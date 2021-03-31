@@ -8,6 +8,7 @@ export default {
   output: {
     library: 'ReduxModule',
     libraryTarget: 'umd',
+    libraryExport: 'default',
     filename: 'index.js',
     path: `${__dirname}/dist`,
     globalObject: 'this',
