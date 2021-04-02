@@ -25,9 +25,9 @@ app.create('setUser', ['user'])
 
 ## Installation
 
-````sh
+```sh
 npm install --save @labelinsight/redux-module
-```(
+```
 
 ```js
 // module
@@ -38,7 +38,7 @@ const ReduxModule = require('@labelinsight/redux-module')
 
 // browser
 window.ReduxModule
-````
+```
 
 ## Why?
 
